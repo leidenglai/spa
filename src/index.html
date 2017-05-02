@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html data-dpr="1" style="font-size: 36px;">
+<head>
+<meta charset="utf-8">
+<meta http-equiv="Cache-Control" content="max-age=31104000" />
+<!-- 从桌面icon启动进入全屏状态 -->
+<meta content="yes" name="apple-mobile-web-app-capable" />
+<meta content="yes" name="apple-touch-fullscreen" />
+<!-- ios设备禁止将数字识别为可点击的tel link  -->
+<meta content="telephone=no,email=no" name="format-detection" />
+<title>Spa Demo</title>
+<script>
+  /*
+  * 按照宽高比例设定html字体, width=device-width initial-scale=0.5
+  */
+  !function(N,M){function L(){var a=I.getBoundingClientRect().width;a/F>540&&(a=540*F);var d=a/10;I.style.fontSize=d+"px",D.rem=N.rem=d}var K,J=N.document,I=J.documentElement,H=J.querySelector('meta[name="viewport"]'),G=J.querySelector('meta[name="flexible"]'),F=0,E=0,D=M.flexible||(M.flexible={});if(H){console.warn("将根据已有的meta标签来设置缩放比例");var C=H.getAttribute("content").match(/initial\-scale=([\d\.]+)/);C&&(E=parseFloat(C[1]),F=parseInt(1/E))}else{if(G){var B=G.getAttribute("content");if(B){var A=B.match(/initial\-dpr=([\d\.]+)/),z=B.match(/maximum\-dpr=([\d\.]+)/);A&&(F=parseFloat(A[1]),E=parseFloat((1/F).toFixed(2))),z&&(F=parseFloat(z[1]),E=parseFloat((1/F).toFixed(2)))}}}if(!F&&!E){var y=N.navigator.userAgent,x=(!!y.match(/android/gi),!!y.match(/iphone/gi)),w=x&&!!y.match(/OS 9_3/),v=N.devicePixelRatio;F=x&&!w?v>=3&&(!F||F>=3)?3:v>=2&&(!F||F>=2)?2:1:1,E=1/F}if(I.setAttribute("data-dpr",F),!H){if(H=J.createElement("meta"),H.setAttribute("name","viewport"),H.setAttribute("content","initial-scale="+E+", maximum-scale="+E+", minimum-scale="+E+", user-scalable=no"),I.firstElementChild){I.firstElementChild.appendChild(H)}else{var u=J.createElement("div");u.appendChild(H),J.write(u.innerHTML)}}N.addEventListener("resize",function(){clearTimeout(K),K=setTimeout(L,300)},!1),N.addEventListener("pageshow",function(b){b.persisted&&(clearTimeout(K),K=setTimeout(L,300))},!1),"complete"===J.readyState?J.body.style.fontSize=12*F+"px":J.addEventListener("DOMContentLoaded",function(){J.body.style.fontSize=12*F+"px"},!1),L(),D.dpr=N.dpr=F,D.refreshRem=L,D.rem2px=function(d){var c=parseFloat(d)*this.rem;return"string"==typeof d&&d.match(/rem$/)&&(c+="px"),c},D.px2rem=function(d){var c=parseFloat(d)/this.rem;return"string"==typeof d&&d.match(/px$/)&&(c+="rem"),c}}(window,window.lib||(window.lib={}));
+</script>
+<script>
+  /*
+    *重置默认样式
+   */
+  !function(){var e="@charset \"utf-8\";html{color:#000;background:#fff;overflow-y:scroll;-webkit-text-size-adjust:100%;-ms-text-size-adjust:100%}html *{outline:0;-webkit-text-size-adjust:none;-webkit-tap-highlight-color:rgba(0,0,0,0)}html,body{font-family:Arial}body,div,dl,dt,dd,ul,ol,li,h1,h2,h3,h4,h5,h6,pre,code,form,fieldset,legend,input,textarea,p,blockquote,th,td,hr,button,article,aside,details,figcaption,figure,footer,header,hgroup,menu,nav,section{margin:0;padding:0}input,select,textarea{font-size:100%}table{border-collapse:collapse;border-spacing:0}fieldset,img{border:0}abbr,acronym{border:0;font-variant:normal}del{text-decoration:line-through}address,caption,cite,code,dfn,em,th,var{font-style:normal;font-weight:500}ol,ul{list-style:none}caption,th{text-align:left}h1,h2,h3,h4,h5,h6{font-size:100%;font-weight:500}q:before,q:after{content:''}sub,sup{font-size:75%;line-height:0;position:relative;vertical-align:baseline}sup{top:-.5em}sub{bottom:-.25em}a:hover{text-decoration:underline}ins,a{text-decoration:none}",d=document.createElement("style");if(document.getElementsByTagName("head")[0].appendChild(d),d.styleSheet){d.styleSheet.disabled||(d.styleSheet.cssText=e)}else{try{d.innerHTML=e}catch(f){d.innerText=e}}}();
+</script>
+</head>
+
+<body>
+  <!-- 主容器 -->
+  <div id="container"></div>
+  <!-- 主容器 end -->
+
+  <!-- 底部导航 -->
+  <div id="bottomNavbar"></div>
+  <!-- 底部导航 end -->
+
+  <!-- 全局消息提示 -->
+  <div id="messageBox"></div>
+  <!-- 全局消息提示 end -->
+
+  <!-- 全页面loading -->
+  <div class="full-page-loading hide" id="fullPageLoading">
+    <div class="mask"></div>
+    <div class="loading-content"><span class="loading rotate-ani"></span></div>
+  </div>
+  <!-- 全页面loading end-->
+
+  <!-- 网络错误 -->
+  <div class="error-page hide" id="errorPage">
+    <div class="mask"></div>
+    <div class="error-content">
+      <div class="error-img"></div>
+      <p class="error-tips"></p>
+      <div class="error-btn"><span class="btn btn-small"></span></div>
+    </div>
+  </div>
+  <!-- 网络错误 end-->
+</body>
+</html>

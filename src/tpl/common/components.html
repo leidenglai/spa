@@ -1,0 +1,9 @@
+<!-- 数量选择控制器 -->
+<script type="text/html" id="quantityControlTmpl">
+  <div class="quantity-select <%=data.isId ? ('" id="' + data.el.slice(1)) : data.el.slice(1)%>">
+    <i class="btn-minus btn-b <%=(data.min === data.value ? 'btn-b-disable' : 'btn-b-active') %>">-</i>
+    <input type="number" data-max="<%-data.max %>" data-min="<%-data.min %>" value="<%-data.value %>" class="quantity-input">
+    <div class="input-focus"></div>
+    <i class="btn-plus btn-b btn-b-active">+</i>
+  </div>
+</script>

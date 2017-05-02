@@ -1,0 +1,66 @@
+<script type="text/html" id="storeTmpl">
+  <div id="storeContent" class="pageContainer">
+    <article>
+      <section class="wrapper" id="storeContentScroll">
+        <div id="scroll">
+          <div class="content-box-tabname">
+            <div class="content-box-tab-btn tab1 sort-list-btn">
+              <span class="tab-btn-name"><%= $.i18n.prop('msg_sort')%></span>
+              <div class="sort-list">
+                <ul>
+                  <li class="sort-btn selected2" data-type="1"><span class="text"><%= $.i18n.prop('msg_new')%></span></li>
+                  <li class="sort-btn" data-type="2"><span class="text"><%= $.i18n.prop('msg_price')%><i class="arrow-sort icon"></i></span></li>
+                </ul>
+              </div>
+            </div>
+            <div class="content-box-tab-btn tab2 category-btn"><span><%= $.i18n.prop('msg_category')%></span></div>
+          </div>
+          <div class="product-list" id="productList">
+            <div class="column even">
+              <ul class="product-list-ul">
+              </ul>
+            </div>
+            <div class="column odd">
+              <ul class="product-list-ul">
+              </ul>
+            </div>
+          </div>
+          <div class="small-loading" id="smallLoading">
+            <div class="loading-content"><span class="loading rotate-ani"></span></div>
+            <span class="loading-text hide">-- No More --</span>
+          </div>
+        </div>
+      </section>
+    </article>
+    <div class="up-btn go-top"><span class="btn-bg"></span><i class="icon icon-up-bold"></i></div>
+    <article class="category-box">
+      <div class="mask"></div>
+      <div class="category-content">
+        <div id="categoryIscroll" class="category-wapper">
+          <ul class="scroll"></ul>
+        </div>
+      </div>
+      <div class="category-clear"><span class="icon icon-angle-right"></span></div>
+    </article>
+  </div>
+</script>
+<script type="text/html" id="productLiTmpl">
+  <li class="product-li" data-id="<%- data.item.productId %>" data-user-id="<%- data.item.userId %>" data-key="<%- data.key%>" style="padding: <%- data.padding%>rem">
+    <div class="list-item go-detail">
+      <div class="card-img" style="height: <%-data.imgHeight%>px">
+        <div class="product-img-default icon icon-logo"></div>
+      </div>
+      <div class="btn-group">
+        <div class="item-btn buy-btn">
+          <span><%=data.price[0] + (data.price[1] ? (' - ' + data.price[1]) : '')%></span>
+        </div>
+      </div>
+    </div>
+  </li>
+</script>
+<script type="text/html" id="productCategoryEmptyTmpl">
+  <div class="product-null product-other">
+    <div class="img"><img src="../img/product-null.png"></div>
+    <p><%= $.i18n.prop('msg_this_category_not_product')%></p>
+  </div>
+</script>
