@@ -1,5 +1,6 @@
 import { requestData } from 'utils/ajaxLoad'
-import { APP_URL } from 'config'
+import routesMap from 'js/routes'
+import message from 'utils/message'
 
 /**
  * 公共模块
@@ -19,35 +20,48 @@ export default class Main {
    * @parmas title {String}[必填] title 文字
    */
   setTitle = (title) => {
-    document.title = `${title} | NovoShops`
-  }
+    const titleContent = `${title} | spa`;
 
-  /**
-   * 控制页面内容显示
-   *
-   * @parmas labelClass {String} [可选] 要控制的类名
-   */
-  showPage = (labelClass) => {
-    $('.welcome-content').addClass('hide');
-    appView.find(`.${labelClass}-loading`).addClass('none');
-    //....
-  }
+    document.title = titleContent;
 
+    // 获取当前模块名
+    const moduleName = RouterController.getRoute()[0];
+
+    window.moduleInstanceStack[moduleName].titleContent = titleContent;
+  }
   /**
    * 页面跳转
    *
    * @parmas module {String} [必选] 模块名
-   * @parmas params {Array} [可选] 跳转参数
+   * @parmas params {Object} [可选] 跳转参数
    * @parmas type {String} [可选] new 打开新窗口
    */
-  goModule = (moduleName, params = [], type = '') => {
-    var url = moduleName;
-    if (params.length) {
-      var _params = params.join('/')
-      url = `/${moduleName}/${_params}`
+  goModule = (moduleName, params = {}, type = '') => {
+    let url = moduleName;
+    const routesKeys = _.keys(routesMap);
+    let router = [];
+    let _params = [];
+
+    _.forEach(routesKeys, (val) => {
+      const keys = val.split('/')
+      keys.splice(0, 1)
+
+      if (keys[0] == moduleName) {
+        router = _.map(keys, val => val.replace(':', ''));
+      }
+    })
+    if (router.length == 0) {
+      // message.error('路由配置或者跳转错误')
+      return false;
+    } else if (router.length > 1) {
+      for (var i = 1; i < router.length; i++) {
+        _params.push(params[router[i]])
+      }
+      url = `/${moduleName}/${_params.join('/')}`
     } else {
       url = `/${moduleName}`
     }
+
     if (type === 'new') {
       window.open(url);
     } else {

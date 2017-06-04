@@ -32,8 +32,8 @@ class Message {
 
     let node = $(html)
 
-    this.messageDom.append(node)
-    node.addClass('move-up-fade')
+    this.messageDom.prepend(node)
+    node.addClass('move-down-fade')
 
     setTimeout(() => {
       this.uninstall(node)
@@ -41,7 +41,7 @@ class Message {
   }
 
   uninstall(node) {
-    node.removeClass('move-up-fade').addClass('move-up-leave');
+    node.removeClass('move-down-fade').addClass('move-down-leave');
 
     setTimeout(() => {
       node.remove()
@@ -50,7 +50,7 @@ class Message {
 
   bindEvent() {
     const that = this;
-    this.messageDom.on('touchstart', '.message-notice', function(e) {
+    this.messageDom.off('touchstart', '.message-notice').on('touchstart', '.message-notice', function(e) {
       e.stopPropagation();
       e.preventDefault();
       that.uninstall($(this))

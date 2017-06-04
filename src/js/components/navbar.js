@@ -1,7 +1,10 @@
 import Main from 'utils/main'
 import handleTemplate from 'utils/handleTemplate'
-import template from 'tpl/common/bottomNavbar.html'
+import template from 'tpl/components/bottomNavbar.html'
 
+/**
+ * 底部导航
+ */
 export default class NavbarClass extends Main {
   constructor() {
     super()

@@ -1859,6 +1859,13 @@ window.$ === undefined && (window.$ = Zepto)
           if (deltaX < 30 && deltaY < 30) {
             // delay by one tick so we can cancel the 'tap' event if 'scroll' fires
             // ('tap' fires before 'scroll')
+            var pos = {
+              x1: touch.x1,
+              x2: touch.x2,
+              y1: touch.y1,
+              y2: touch.y2
+            }
+
             tapTimeout = setTimeout(function() {
 
               // trigger universal 'tap' with the option to cancelTouch()
@@ -1866,7 +1873,15 @@ window.$ === undefined && (window.$ = Zepto)
               var event = $.Event('tap')
               event.cancelTouch = cancelAll
                 // [by paper] fix -> "TypeError: 'undefined' is not an object (evaluating 'touch.el.trigger'), when double tap
+
               if (touch.el) touch.el.trigger(event)
+
+              // 给点击动画一个单独的事件
+              // https://github.com/madrobby/zepto/pull/1150/commits/fcf2f035b38c6097eb93f5c24a6537c3db97452c
+              var eventAni = $.Event('tapAni')
+                // 加入的位置信息pos
+              eventAni.pos = pos
+              touch.el.trigger(eventAni)
 
               // trigger double tap immediately
               if (touch.isDoubleTap) {
@@ -1901,7 +1916,7 @@ window.$ === undefined && (window.$ = Zepto)
 
   ;
   ['swipe', 'swipeLeft', 'swipeRight', 'swipeUp', 'swipeDown',
-    'doubleTap', 'tap', 'singleTap', 'longTap'].forEach(function(eventName) {
+    'doubleTap', 'tap', 'tapAni', 'singleTap', 'longTap'].forEach(function(eventName) {
     $.fn[eventName] = function(callback) {
       return this.on(eventName, callback)
     }

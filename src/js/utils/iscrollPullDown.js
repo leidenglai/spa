@@ -48,7 +48,7 @@ var PullDownHandler = function(wrapperName, iScrollConfig, pullDownActionHandler
       // (if pullUpActionHandler==null this iScroll will have no pull-up-functionality)
       pullUpEl = document.createElement('div');
       pullUpEl.className = 'pullUp';
-      pullUpEl.innerHTML = '<span class="pullUpIcon"></span><span class="pullUpLabel">Pull up to load more...</span>';
+      pullUpEl.innerHTML = '<span class="pullUpIcon"></span><span class="pullUpLabel">' + $.i18n.prop('msg_pull_up_to_load_more') + '</span>';
       scrollerObj.appendChild(pullUpEl);
     }
 
@@ -142,10 +142,10 @@ var PullDownHandler = function(wrapperName, iScrollConfig, pullDownActionHandler
       if (pullUpEl) {
         if (this.y < (this.maxScrollY - pullThreshold) && !pullUpEl.className.match('flip')) {
           pullUpEl.className = 'pullUp flip';
-          pullUpEl.querySelector('.pullUpLabel').innerHTML = 'Release to load more...';
+          pullUpEl.querySelector('.pullUpLabel').innerHTML = $.i18n.prop('msg_release_to_load_more');
         } else if (this.y > (this.maxScrollY + pullThreshold) && pullUpEl.className.match('flip')) {
           pullUpEl.className = 'pullUp';
-          pullUpEl.querySelector('.pullUpLabel').innerHTML = 'Pull up to load more...';
+          pullUpEl.querySelector('.pullUpLabel').innerHTML = $.i18n.prop('msg_pull_up_to_load_more');
         }
       }
     });

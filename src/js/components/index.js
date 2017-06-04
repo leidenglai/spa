@@ -3,7 +3,7 @@
  *
  */
 import handleTemplate from 'utils/handleTemplate'
-import template from 'tpl/common/components.html'
+import template from 'tpl/components/index.html'
 
 var Components = function(selector) {
   return new Components.prototype.init(selector);

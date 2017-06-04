@@ -53,7 +53,6 @@
       cache: false,
       encoding: 'UTF-8',
       async: false,
-      checkAvailableLanguages: false,
       callback: null
     };
     settings = $.extend(defaults, settings);
@@ -66,43 +65,54 @@
       settings.totalFiles = 0;
       settings.filesLoaded = 0;
 
-      // load and parse bundle files
-      var files = getFiles(settings.name);
+      // 如果配置好了加载properties文件 则使用配置的加载方式代替$.ajax加载文件
+      // 改造成适合webpack的加载方式
+      if (settings.loadFileOption) {
+        settings.loadFileOption[settings.language]((data) => {
 
-      if (settings.async) {
-        for (var i = 0, j = files.length; i < j; i++) {
-          // 1 for the base.
-          settings.totalFiles += 1;
+          settings.totalFiles = 1;
+
+          parseData(data, settings.mode);
+          callbackIfComplete(settings);
+        })
+      } else {
+        // load and parse bundle files
+        var files = getFiles(settings.name);
+
+        if (settings.async) {
+          for (var i = 0, j = files.length; i < j; i++) {
+            // 1 for the base.
+            settings.totalFiles += 1;
+            // 2. with language code (eg, Messages_pt.properties)
+            // var shortCode = settings.language.substring(0, 2);
+            // if (languages.length == 0 || $.inArray(shortCode, languages) != -1) {
+            //   // 1 for the short code file
+            //   settings.totalFiles += 1;
+            // }
+            // 3. with language code and country code (eg, Messages_pt_BR.properties)
+            if (settings.language.length >= 5) {
+              var longCode = settings.language.substring(0, 5);
+              if (languages.length == 0 || $.inArray(longCode, languages) != -1) {
+                // 1 for the long code file
+                settings.totalFiles += 1;
+              }
+            }
+          }
+        }
+        for (var k = 0, m = files.length; k < m; k++) {
+          // 1. load base (eg, Messages.properties)
+          loadAndParseFile(settings.path + files[k] + '.properties', settings);
           // 2. with language code (eg, Messages_pt.properties)
           // var shortCode = settings.language.substring(0, 2);
           // if (languages.length == 0 || $.inArray(shortCode, languages) != -1) {
-          //   // 1 for the short code file
-          //   settings.totalFiles += 1;
+          //   loadAndParseFile(settings.path + files[k] + '_' + shortCode + '.properties', settings);
           // }
           // 3. with language code and country code (eg, Messages_pt_BR.properties)
           if (settings.language.length >= 5) {
             var longCode = settings.language.substring(0, 5);
             if (languages.length == 0 || $.inArray(longCode, languages) != -1) {
-              // 1 for the long code file
-              settings.totalFiles += 1;
+              loadAndParseFile(settings.path + files[k] + '_' + longCode + '.properties', settings);
             }
-          }
-        }
-      }
-
-      for (var k = 0, m = files.length; k < m; k++) {
-        // 1. load base (eg, Messages.properties)
-        loadAndParseFile(settings.path + files[k] + '.properties', settings);
-        // 2. with language code (eg, Messages_pt.properties)
-        // var shortCode = settings.language.substring(0, 2);
-        // if (languages.length == 0 || $.inArray(shortCode, languages) != -1) {
-        //   loadAndParseFile(settings.path + files[k] + '_' + shortCode + '.properties', settings);
-        // }
-        // 3. with language code and country code (eg, Messages_pt_BR.properties)
-        if (settings.language.length >= 5) {
-          var longCode = settings.language.substring(0, 5);
-          if (languages.length == 0 || $.inArray(longCode, languages) != -1) {
-            loadAndParseFile(settings.path + files[k] + '_' + longCode + '.properties', settings);
           }
         }
       }
@@ -111,20 +121,10 @@
       if (settings.callback && !settings.async) {
         settings.callback();
       }
+
     };
 
-    if (settings.checkAvailableLanguages) {
-      $.ajax({
-        url: settings.path + 'languages.json',
-        async: settings.async,
-        cache: false,
-        success: function(data, textStatus, jqXHR) {
-          languagesFileLoadedCallback(data.languages || []);
-        }
-      });
-    } else {
-      languagesFileLoadedCallback([]);
-    }
+    languagesFileLoadedCallback([]);
   };
 
   /**
@@ -284,14 +284,12 @@
 
   /** Load and parse .properties files */
   function loadAndParseFile(filename, settings) {
-    if (settings.version) filename = filename + '?' + settings.version;
     $.ajax({
       url: filename,
       async: settings.async,
       cache: settings.cache,
       dataType: 'text',
       success: function(data, status) {
-
         parseData(data, settings.mode);
         callbackIfComplete(settings);
       },

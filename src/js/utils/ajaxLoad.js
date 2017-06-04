@@ -1,4 +1,4 @@
-import { API_URL, MD5_SUBJOIN } from 'config'
+import { API_URL, MD5_SUBJOIN, DEF_REQUEST_CONFIG } from 'config'
 import md5 from 'md5'
 import message from 'utils/message'
 
@@ -7,26 +7,38 @@ import message from 'utils/message'
  * @function requestData
  *
  * @param  api {String} [必选] 接口名
- * @param  data {Object} [可选] [默认值：{}]往后端发送的数据对象
- * @param  md5Type {Boolean} [可选] [默认值：false] 是否md5加密校验， 如果是 需要在调用处加载md5模块
+ * @param  data {Object} [可选] [default: {}]往后端发送的数据对象
+ * @param  options {Object} [可选] 请求参数
+ * {
+ *   md5: false, // [default: false] 是否md5加密校验， 如果是 需要在调用处加载md5模块
+ *   progress: false // [default: false] 是否显示 加载进度，暂时不可用 需要后端返回正确的Content-Length
+ * }
  *
  * @return requestData {Promise} Promise
  */
-export function requestData(api, data, md5Type) {
+export function requestData(api, data = {}, options = {}) {
   return new Promise(function(resolve, reject) {
-    var requsetUrl = API_URL + api,
-      md5Type = md5Type || false;
+    var requsetUrl = API_URL + api;
 
     //合并默认参数
-    var params = $.extend({
-      userId: '111111', // 用户ID
-      token: '111111', // 权限Token
-    }, data || {});
+    var params = _.assign({
+      userId: getUid(), // 用户ID
+      token: getToken(), // 权限Token
 
-    if (md5Type) {
+    }, DEF_REQUEST_CONFIG, data);
+
+    if (options.md5) {
       //将所有参数值合并为一个字符串，然后md5加密
       var _keyArr = [];
       var verify = '';
+
+      for (var key in params) {
+        if (key === 'productPics' || key === 'description') { //不加密校验图片地址、描述
+          continue;
+        }
+
+        _keyArr.push(_.trim(params[key]));
+      }
 
       _keyArr.sort();
       verify = _keyArr.join('');
@@ -59,24 +71,26 @@ export function requestData(api, data, md5Type) {
       }
     }
 
-    $.ajax({
+    // ajax 参数配置
+    let ajaxConfig = {
       url: requsetUrl,
       type: 'post',
       data: params,
       timeout: 30000,
       dataType: 'json',
-      success: function(res) {
+      success: (res) => {
         internetErrorPage('hide');
         if (res.code === 1) {
           //返回后端数据、 请求时的参数
           resolve({ data: res.data, params: params, code: res.code });
         } else {
           // 报错给promise
+          console.log(res.msg);
+
           reject(res);
-          message.error(res.msg);
         }
       },
-      error: function(xhr, textStatus) {
+      error: (xhr, textStatus) => {
         if (textStatus == 'parsererror') {
           console.log('Server Error!');
         } else if (textStatus == 'timeout' || textStatus == 'abort') {
@@ -84,8 +98,10 @@ export function requestData(api, data, md5Type) {
           internetErrorPage('show');
           console.log('Timeout Error!');
         } else if (xhr.status === 401) {
+          // 清除已登录标记
+          localStorage.removeItem('userId')
+
           reject({ code: 401, msg: "Token Error!" });
-          message.error('Token Error!');
         } else {
           //显示网络错误页面
           internetErrorPage('show');
@@ -93,7 +109,23 @@ export function requestData(api, data, md5Type) {
         }
         xhr = null;
         return;
-      },
-    });
+      }
+    }
+
+    if (options.progress) {
+      ajaxConfig.xhrFields = {
+        onloadstart: (event) => {
+          console.log('start')
+        },
+        onprogress: (event) => {
+          console.log(event)
+        },
+        onloadend: (event) => {
+          console.log('end')
+        }
+      }
+    }
+
+    $.ajax(ajaxConfig);
   })
 }
