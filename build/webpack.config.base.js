@@ -44,6 +44,7 @@ module.exports = {
         utils: path.join(src, 'js/utils'),
         config: path.join(src, 'js/config'),
         constants: path.join(src, 'js/constants'),
+        i18n: path.join(src, 'i18n'),
         css: path.join(src, 'css'),
         img: path.join(src, 'img')
       }
@@ -93,6 +94,10 @@ module.exports = {
         {
           test: /\.(woff2?|eot|ttf|otf)$/,
           loader: 'url-loader?limit=10240&name=fonts/[name]-[hash:6].[ext]'
+        },
+        {
+          test: /\.properties$/,
+          loader: 'raw-loader'
         }
       ]
     },

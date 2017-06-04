@@ -3,9 +3,11 @@ var path = require('path'),
   baseConfig = require('./webpack.config.base'),
   config = baseConfig.config,
   commonPath = baseConfig.commonPath,
+
   HtmlWebpackPlugin = require('html-webpack-plugin'),
   ExtractTextPlugin = require('extract-text-webpack-plugin'),
   BrowserSyncPlugin = require('browser-sync-webpack-plugin'),
+
   SOURCE_MAP = true;
 
 var rootPath = path.resolve(__dirname, '..'), // 项目根目录
